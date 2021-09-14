@@ -1,4 +1,4 @@
 #export env variables
 
-export var1=maven
-export var2=bin
+export DB_USER=postgres
+export DB_PASS=gsaiho2017
