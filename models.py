@@ -4,11 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-database_name = "tristan"
-db_user = os.environ['DB_USER']
-db_pass = os.environ['DB_PASS']
-database_path = "postgresql://{}:{}@{}/{}".format(db_user, db_pass,
-                                                  'localhost:5432', database_name)
+# database_name = "tristan"
+# db_user = os.environ['DB_USER']
+# db_pass = os.environ['DB_PASS']
+database_path = os.environ['DATABASE_URL']
 
 
 def setup_db(app, database_path=database_path):
