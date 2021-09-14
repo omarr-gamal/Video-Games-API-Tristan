@@ -21,6 +21,7 @@ import random
 from flask_migrate import Migrate
 from logging import Formatter, FileHandler, log
 from models import *
+from auth import requires_auth, AuthError
 
 
 #----------------------------------------------------------------------------#
@@ -40,6 +41,7 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games', methods=['GET'])
+    @requires_auth('get:games')
     def get_games():
         try:
             games = Game.query.all()
@@ -66,6 +68,7 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games/<int:game_id>', methods=['GET'])
+    @requires_auth('get:games')
     def get_game_by_id(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -91,6 +94,7 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games', methods=['POST'])
+    @requires_auth('post:games')
     def post_game():
         body = request.get_json()
         try:
@@ -124,6 +128,7 @@ def create_app(test_config=None):
             })
 
     @ app.route('/games/<int:game_id>', methods=['PATCH'])
+    @requires_auth('patch:games')
     def patch_game(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -179,6 +184,7 @@ def create_app(test_config=None):
             })
 
     @ app.route('/games/<int:game_id>', methods=['DELETE'])
+    @requires_auth('delete:games')
     def delete_game(game_id):
         try:
             game = Game.query.filter(
