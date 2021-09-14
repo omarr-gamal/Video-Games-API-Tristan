@@ -8,11 +8,12 @@ db = SQLAlchemy()
 # db_user = os.environ['DB_USER']
 # db_pass = os.environ['DB_PASS']
 # database_path = os.environ['DATABASE_URL']
-database_path = 'postgresql://ebulgcmkogfscf:d516f4d3a4f3ece5f8710ac6ebc9be05fbaec90b226932ecb2b9b15044abbe58@ec2-18-215-44-132.compute-1.amazonaws.com:5432/d2n6j67332m9ll'
+dev_database_path = database_path = "postgresql://postgres:gsaiho2017@localhost:5432/tristan"
+prod_database_path = 'postgresql://ebulgcmkogfscf:d516f4d3a4f3ece5f8710ac6ebc9be05fbaec90b226932ecb2b9b15044abbe58@ec2-18-215-44-132.compute-1.amazonaws.com:5432/d2n6j67332m9ll'
 
 
 def setup_db(app, database_path=database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = prod_database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)

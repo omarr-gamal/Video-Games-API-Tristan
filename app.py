@@ -37,7 +37,7 @@ def create_app(test_config=None):
     @ app.route('/')
     def index():
         return jsonify({
-            'is it working?': 'yes',
+            'message': 'hi, this is game api tristan. In order to understand how to interact with the api, please read the documentation here https://github.com/fiend361/Video-Games-API-Tristan',
         })
 
     @ app.route('/games', methods=['GET'])

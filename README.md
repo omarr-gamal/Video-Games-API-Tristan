@@ -36,7 +36,8 @@ Read the following documentation for the api endpoints if you want to experience
 
 ### Endpoints
 
-```GET '/games'
+```json
+GET '/games'
 GET '/games/<certain_game_id>'
 POST '/games'
 PATCH '/games/<certain_game_id>'
@@ -49,7 +50,8 @@ DELETE '/games/<certain_game_id>'
 - Request Arguments: None
 - Returns: a list of objects each resembling a video game. Response has the following format:
 
-```{
+```json
+{
     "success": true,
     "games": [
         {
@@ -88,7 +90,8 @@ DELETE '/games/<certain_game_id>'
 - Request Arguments: None
 - Returns: An object resembling the video game. Response has the following format:
 
-```{
+```json
+{
     "success": true,
     "games": {
         "id": 1,
@@ -111,7 +114,8 @@ DELETE '/games/<certain_game_id>'
 - Lets you add a game to the api's list of games.
 - Request Arguments: the request must have the following format:
 
-```{
+```json
+{
     "name": "game_1",
     "description": "game_1_description",
     "release_date": "22/3/21",
@@ -128,8 +132,9 @@ Please note that `release_date` has the following format `d/m/y`
 
 - Returns: if the game was added successfully, the response will have the following format:
 
-```{
-    'success': True,
+```json
+{
+    "success": true,
 }
 ```
 
@@ -138,7 +143,8 @@ Please note that `release_date` has the following format `d/m/y`
 - Lets you edit a game.
 - Request Arguments: the request must have the following format:
 
-```{
+```json
+{
     "name": "game_1",
     "description": "game_1_description",
     "release_date": "22/3/21",
@@ -155,8 +161,9 @@ Note that all properties in the above request are optional. If you included prop
 
 - Returns: if the request was processed successfully, the response will have the following format:
 
-```{
-    'success': True,
+```json
+{
+    "success": true,
 }
 ```
 
@@ -166,8 +173,9 @@ Note that all properties in the above request are optional. If you included prop
 - Request arqument: None.
 - Returns: if the request was processed successfully, the response will have the following format:
 
-```{
-    'success': True,
+```json
+{
+    "success": true,
 }
 ```
 
@@ -191,5 +199,6 @@ At the moment the api does not have a front end through which you can create a a
 
 To run the tests, run
 
-```python test_app.py
+```bash
+python test_app.py
 ```
