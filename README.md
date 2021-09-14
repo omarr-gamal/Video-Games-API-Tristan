@@ -2,6 +2,8 @@
 
 This is a video games api that offers information about video games' release statuses, development studios ratings and genres. Please note that the api is for educational purposes only, and so it may contain inaccurate or placeholder data. it is also worth mentioning that this is a work in progress.
 
+Check out the api running live [here](https://tristan-game-api.herokuapp.com)
+
 ## Running the app locally
 
 If you want to run the app locally on your machine then follow the instructions below
@@ -59,7 +61,7 @@ DELETE '/games/<certain_game_id>'
             "name": "game_1",
             "description": "game_1_description",
             "release_date": "19/4/22",
-            "released": false
+            "released": false,
             "rating": 88,
             "critic_rating": 93,
             "PEGI_rating": 13,
@@ -72,7 +74,7 @@ DELETE '/games/<certain_game_id>'
             "name": "game_2",
             "description": "game_2_description",
             "release_date": "19/4/20",
-            "released": true
+            "released": true,
             "rating": 95,
             "critic_rating": 100,
             "PEGI_rating": 18,
@@ -98,7 +100,7 @@ DELETE '/games/<certain_game_id>'
         "name": "game_1",
         "description": "game_1_description",
         "release_date": "19/4/22",
-        "released": false
+        "released": false,
         "rating": 88,
         "critic_rating": 93,
         "PEGI_rating": 13,
