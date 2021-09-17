@@ -124,7 +124,7 @@ def create_app(test_config=None):
             if developer is None:
                 return jsonify({
                     'success': False,
-                    'message': 'could not find developer with id {new_developer}'
+                    'message': 'could not find developer with id {}'.format(new_developer)
                 })
 
             publisher = Publisher.query.filter(
@@ -132,7 +132,7 @@ def create_app(test_config=None):
             if publisher is None:
                 return jsonify({
                     'success': False,
-                    'message': 'could not find publisher with id {new_publisher}'
+                    'message': 'could not find publisher with id {}'.format(new_publisher)
                 })
 
             game = Game(name=new_name, description=new_description, release_date=new_release_date,
@@ -196,7 +196,7 @@ def create_app(test_config=None):
                 if developer is None:
                     return jsonify({
                         'success': False,
-                        'message': 'could not find developer with id {new_developer}'
+                        'message': 'could not find developer with id {}'.format(new_developer)
                     })
                 game.developer_id = new_developer
             if new_publisher is not None:
@@ -205,7 +205,7 @@ def create_app(test_config=None):
                 if publisher is None:
                     return jsonify({
                         'success': False,
-                        'message': 'could not find publisher with id {new_publisher}'
+                        'message': 'could not find publisher with id {}'.format(new_publisher)
                     })
                 game.publisher_id = new_publisher
 
