@@ -199,7 +199,7 @@ At the moment the api does not have a front end through which you can create a a
 
 ## Testing
 
-To run the tests, run
+If you are running the app locally and would like to run the unittest script that contains tests I wrote for the api endpoints to ensure that it's working correctly, then run the following
 
 ```bash
 python test_app.py
