@@ -41,7 +41,7 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games', methods=['GET'])
-    @requires_auth('get:games')
+    # @requires_auth('get:games')
     def get_games():
         try:
             games = Game.query.all()
@@ -58,8 +58,8 @@ def create_app(test_config=None):
             "critic_rating": game.critic_rating,
             "PEGI_rating":  game.PEGI_rating,
             "genres": game.genres,
-            "developer": game.developer,
-            "publisher": game.publisher
+            "developer": game.developer_id,
+            "publisher": game.publisher_id
         } for game in games]
 
         return jsonify({
@@ -68,7 +68,7 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games/<int:game_id>', methods=['GET'])
-    @requires_auth('get:games')
+    # @requires_auth('get:games')
     def get_game_by_id(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -85,8 +85,8 @@ def create_app(test_config=None):
             "critic_rating": game.critic_rating,
             "PEGI_rating":  game.PEGI_rating,
             "genres": game.genres,
-            "developer": game.developer,
-            "publisher": game.publisher
+            "developer": game.developer_id,
+            "publisher": game.publisher_id
         }
         return jsonify({
             'success': True,
@@ -94,16 +94,22 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games', methods=['POST'])
-    @requires_auth('post:games')
+    # @requires_auth('post:games')
     def post_game():
         body = request.get_json()
         try:
-            new_name = body.get('name', None)
-            new_description = body.get('description', None)
-
             new_release_date = body.get('release_date', None)
             new_released = (datetime.datetime.strptime(
                 new_release_date, '%d/%m/%y') > datetime.datetime.now())
+        except:
+            return jsonify({
+                'success': False,
+                'message': 'please enter date in the correct format d/m/y as in: 30/5/21'
+            })
+
+        try:
+            new_name = body.get('name', None)
+            new_description = body.get('description', None)
 
             new_rating = body.get('rating', None)
             new_critic_rating = body.get('critic_rating', None)
@@ -113,10 +119,26 @@ def create_app(test_config=None):
             new_developer = body.get('developer', None)
             new_publisher = body.get('publisher', None)
 
+            developer = Developer.query.filter(
+                Developer.id == new_developer).one_or_none()
+            if developer is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'could not find developer with id {}'.format(new_developer)
+                })
+
+            publisher = Publisher.query.filter(
+                Publisher.id == new_publisher).one_or_none()
+            if publisher is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'could not find publisher with id {}'.format(new_publisher)
+                })
+
             game = Game(name=new_name, description=new_description, release_date=new_release_date,
                         released=new_released, rating=new_rating, critic_rating=new_critic_rating,
-                        PEGI_rating=new_PEGI_rating, genres=new_genres, developer=new_developer,
-                        publisher=new_publisher)
+                        PEGI_rating=new_PEGI_rating, genres=new_genres, developer_id=new_developer,
+                        publisher_id=new_publisher)
 
             game.insert()
             return jsonify({
@@ -128,7 +150,7 @@ def create_app(test_config=None):
             })
 
     @ app.route('/games/<int:game_id>', methods=['PATCH'])
-    @requires_auth('patch:games')
+    # @requires_auth('patch:games')
     def patch_game(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -169,9 +191,23 @@ def create_app(test_config=None):
             if new_genres is not None:
                 game.genres = new_genres
             if new_developer is not None:
-                game.developer = new_developer
+                developer = Developer.query.filter(
+                    Developer.id == new_developer).one_or_none()
+                if developer is None:
+                    return jsonify({
+                        'success': False,
+                        'message': 'could not find developer with id {}'.format(new_developer)
+                    })
+                game.developer_id = new_developer
             if new_publisher is not None:
-                game.publisher = new_publisher
+                publisher = Publisher.query.filter(
+                    Publisher.id == new_publisher).one_or_none()
+                if publisher is None:
+                    return jsonify({
+                        'success': False,
+                        'message': 'could not find publisher with id {}'.format(new_publisher)
+                    })
+                game.publisher_id = new_publisher
 
             game.update()
 
@@ -184,7 +220,7 @@ def create_app(test_config=None):
             })
 
     @ app.route('/games/<int:game_id>', methods=['DELETE'])
-    @requires_auth('delete:games')
+    # @requires_auth('delete:games')
     def delete_game(game_id):
         try:
             game = Game.query.filter(
@@ -194,6 +230,112 @@ def create_app(test_config=None):
 
             game.delete()
 
+            return jsonify({
+                'success': True,
+            })
+        except:
+            return jsonify({
+                'success': False,
+            })
+
+    @ app.route('/developers', methods=['GET'])
+    def get_developers():
+        try:
+            developers = Developer.query.all()
+        except:
+            abort(422)
+
+        data = [{
+            "id": developer.id,
+            "name": developer.name,
+            "description": developer.description
+        } for developer in developers]
+
+        return jsonify({
+            'success': True,
+            'developers': data,
+        })
+
+    @ app.route('/developers/<int:developer_id>', methods=['GET'])
+    def get_developer_by_id(developer_id):
+        developer = Developer.query.filter(
+            Developer.id == developer_id).one_or_none()
+        if developer is None:
+            abort(404)
+
+        data = {
+            "id": developer.id,
+            "name": developer.name,
+            "description": developer.description
+        }
+        return jsonify({
+            'success': True,
+            'developer': data,
+        })
+
+    @ app.route('/developers', methods=['POST'])
+    def post_developer():
+        body = request.get_json()
+        try:
+            new_name = body.get('name', None)
+            new_description = body.get('description', None)
+
+            developer = Developer(name=new_name, description=new_description)
+
+            developer.insert()
+            return jsonify({
+                'success': True,
+            })
+        except:
+            return jsonify({
+                'success': False,
+            })
+
+    @ app.route('/publishers', methods=['GET'])
+    def get_publishers():
+        try:
+            publishers = Publisher.query.all()
+        except:
+            abort(422)
+
+        data = [{
+            "id": publisher.id,
+            "name": publisher.name,
+            "description": publisher.description
+        } for publisher in publishers]
+
+        return jsonify({
+            'success': True,
+            'publishers': data,
+        })
+
+    @ app.route('/publishers/<int:publisher_id>', methods=['GET'])
+    def get_publisher_by_id(publisher_id):
+        publisher = Publisher.query.filter(
+            Publisher.id == publisher_id).one_or_none()
+        if publisher is None:
+            abort(404)
+
+        data = {
+            "id": publisher.id,
+            "name": publisher.name,
+            "description": publisher.description
+        }
+        return jsonify({
+            'success': True,
+            'publisher': data,
+        })
+
+    @ app.route('/publishers', methods=['POST'])
+    def post_publisher():
+        body = request.get_json()
+        try:
+            new_name = body.get('name', None)
+            new_description = body.get('description', None)
+
+            publisher = Publisher(name=new_name, description=new_description)
+
+            publisher.insert()
             return jsonify({
                 'success': True,
             })

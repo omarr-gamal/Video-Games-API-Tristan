@@ -1,5 +1,6 @@
 import os
 from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -13,7 +14,7 @@ prod_database_path = 'postgresql://ebulgcmkogfscf:d516f4d3a4f3ece5f8710ac6ebc9be
 
 
 def setup_db(app, database_path=database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = prod_database_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = dev_database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
@@ -36,11 +37,11 @@ class Game(db.Model):
     PEGI_rating = Column(Integer)
 
     genres = Column(String)
-    developer = Column(String)
-    publisher = Column(String)
+    developer_id = Column(Integer, db.ForeignKey('Developer.id'))
+    publisher_id = Column(Integer, db.ForeignKey('Publisher.id'))
 
     def __init__(self, name, description, release_date, released, rating,
-                 critic_rating, PEGI_rating, genres, developer, publisher):
+                 critic_rating, PEGI_rating, genres, developer_id, publisher_id):
         self.name = name
         self.description = description
         self.release_date = release_date
@@ -49,8 +50,8 @@ class Game(db.Model):
         self.critic_rating = critic_rating
         self.PEGI_rating = PEGI_rating
         self.genres = genres
-        self.developer = developer
-        self.publisher = publisher
+        self.developer_id = developer_id
+        self.publisher_id = publisher_id
 
     def insert(self):
         db.session.add(self)
@@ -72,6 +73,9 @@ class Developer(db.Model):
     name = Column(String)
     description = Column(String(500))
 
+    developed_games = relationship("Game", backref='developed_games',
+                                   cascade="all, delete")
+
     def __init__(self, name, description):
         self.name = name
         self.description = description
@@ -88,13 +92,16 @@ class Developer(db.Model):
         db.session.commit()
 
 
-class publisher(db.Model):
-    __tablename__ = 'publisher'
+class Publisher(db.Model):
+    __tablename__ = 'Publisher'
 
     id = Column(Integer, primary_key=True)
 
     name = Column(String)
     description = Column(String(500))
+
+    published_games = relationship("Game", backref='published_games',
+                                   cascade="all, delete")
 
     def __init__(self, name, description):
         self.name = name
