@@ -34,6 +34,30 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
+    def make_invalid_date_format_error_message():
+        return jsonify({
+            'success': False,
+            'message': 'please enter date in the correct format d/m/y as in: 30/5/21'
+        })
+
+    def make_unexpected_error_message():
+        return jsonify({
+            'success': False,
+            'message': 'an unexpected error occured while processing your request. Please try again shortly.'
+        })
+
+    def make_developer_not_found_error_message(new_developer):
+        return jsonify({
+            'success': False,
+            'message': 'could not find developer with id {}'.format(new_developer)
+        })
+
+    def make_publisher_not_found_error_message(new_publisher):
+        return jsonify({
+            'success': False,
+            'message': 'could not find publisher with id {}'.format(new_publisher)
+        })
+
     @ app.route('/')
     def index():
         return jsonify({
@@ -41,26 +65,13 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games', methods=['GET'])
-    # @requires_auth('get:games')
     def get_games():
         try:
             games = Game.query.all()
         except:
             abort(422)
 
-        data = [{
-            "id": game.id,
-            "name": game.name,
-            "description": game.description,
-            "release_date": game.release_date,
-            "released": game.released,
-            "rating": game.rating,
-            "critic_rating": game.critic_rating,
-            "PEGI_rating":  game.PEGI_rating,
-            "genres": game.genres,
-            "developer": game.developer_id,
-            "publisher": game.publisher_id
-        } for game in games]
+        data = [game.format() for game in games]
 
         return jsonify({
             'success': True,
@@ -68,7 +79,6 @@ def create_app(test_config=None):
         })
 
     @ app.route('/games/<int:game_id>', methods=['GET'])
-    # @requires_auth('get:games')
     def get_game_by_id(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -83,15 +93,13 @@ def create_app(test_config=None):
     @ app.route('/games', methods=['POST'])
     def post_game():
         body = request.get_json()
+        new_release_date = body.get('release_date', None)
+        new_released = False
         try:
-            new_release_date = body.get('release_date', None)
             new_released = (datetime.datetime.strptime(
-                new_release_date, '%d/%m/%y') > datetime.datetime.now())
+                new_release_date, '%d/%m/%y') < datetime.datetime.now())
         except:
-            return jsonify({
-                'success': False,
-                'message': 'please enter date in the correct format d/m/y as in: 30/5/21'
-            })
+            return make_invalid_date_format_error_message()
 
         try:
             new_name = body.get('name', None)
@@ -108,18 +116,12 @@ def create_app(test_config=None):
             developer = Developer.query.filter(
                 Developer.id == new_developer).one_or_none()
             if developer is None:
-                return jsonify({
-                    'success': False,
-                    'message': 'could not find developer with id {}'.format(new_developer)
-                })
+                return make_developer_not_found_error_message(new_developer)
 
             publisher = Publisher.query.filter(
                 Publisher.id == new_publisher).one_or_none()
             if publisher is None:
-                return jsonify({
-                    'success': False,
-                    'message': 'could not find publisher with id {}'.format(new_publisher)
-                })
+                return make_publisher_not_found_error_message(new_publisher)
 
             game = Game(name=new_name, description=new_description, release_date=new_release_date,
                         released=new_released, rating=new_rating, critic_rating=new_critic_rating,
@@ -132,13 +134,9 @@ def create_app(test_config=None):
                 'game': game.format()
             })
         except:
-            return jsonify({
-                'success': False,
-                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
-            })
+            return make_unexpected_error_message()
 
     @ app.route('/games/<int:game_id>', methods=['PATCH'])
-    # @requires_auth('patch:games')
     def patch_game(game_id):
         game = Game.query.filter(
             Game.id == game_id).one_or_none()
@@ -148,35 +146,27 @@ def create_app(test_config=None):
         body = request.get_json()
 
         new_release_date = body.get('release_date', None)
+        new_released = False
         if new_release_date is not None:
             try:
                 new_released = (datetime.datetime.strptime(
-                    new_release_date, '%d/%m/%y') > datetime.datetime.now())
+                    new_release_date, '%d/%m/%y') < datetime.datetime.now())
             except:
-                return jsonify({
-                    'success': False,
-                    'message': 'please enter date in the correct format d/m/y as in: 30/5/21'
-                })
+                return make_invalid_date_format_error_message()
 
         new_developer = body.get('developer', None)
         if new_developer is not None:
             developer = Developer.query.filter(
                 Developer.id == new_developer).one_or_none()
             if developer is None:
-                return jsonify({
-                    'success': False,
-                    'message': 'could not find developer with id {}'.format(new_developer)
-                })
+                return make_developer_not_found_error_message(new_developer)
 
         new_publisher = body.get('publisher', None)
         if new_publisher is not None:
             publisher = Publisher.query.filter(
                 Publisher.id == new_publisher).one_or_none()
             if publisher is None:
-                return jsonify({
-                    'success': False,
-                    'message': 'could not find publisher with id {}'.format(new_publisher)
-                })
+                return make_publisher_not_found_error_message(new_publisher)
 
         try:
             new_name = body.get('name', None)
@@ -215,10 +205,7 @@ def create_app(test_config=None):
                 'game': game.format()
             })
         except:
-            return jsonify({
-                'success': False,
-                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
-            })
+            return make_unexpected_error_message()
 
     @ app.route('/games/<int:game_id>', methods=['DELETE'])
     def delete_game(game_id):
@@ -235,10 +222,7 @@ def create_app(test_config=None):
                 'message': 'successfully deleted game with id {}'.format(game_id)
             })
         except:
-            return jsonify({
-                'success': False,
-                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
-            })
+            return make_unexpected_error_message()
 
     @ app.route('/developers', methods=['GET'])
     def get_developers():
