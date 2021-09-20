@@ -194,7 +194,6 @@ def create_app(test_config=None):
                 game.description = new_description
             if new_release_date is not None:
                 game.release_date = new_release_date
-            if new_released is not None:
                 game.released = new_released
             if new_rating is not None:
                 game.rating = new_rating
@@ -205,36 +204,23 @@ def create_app(test_config=None):
             if new_genres is not None:
                 game.genres = new_genres
             if new_developer is not None:
-                developer = Developer.query.filter(
-                    Developer.id == new_developer).one_or_none()
-                if developer is None:
-                    return jsonify({
-                        'success': False,
-                        'message': 'could not find developer with id {}'.format(new_developer)
-                    })
                 game.developer_id = new_developer
             if new_publisher is not None:
-                publisher = Publisher.query.filter(
-                    Publisher.id == new_publisher).one_or_none()
-                if publisher is None:
-                    return jsonify({
-                        'success': False,
-                        'message': 'could not find publisher with id {}'.format(new_publisher)
-                    })
                 game.publisher_id = new_publisher
 
             game.update()
 
             return jsonify({
                 'success': True,
+                'game': game.format()
             })
         except:
             return jsonify({
                 'success': False,
+                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
             })
 
     @ app.route('/games/<int:game_id>', methods=['DELETE'])
-    # @requires_auth('delete:games')
     def delete_game(game_id):
         try:
             game = Game.query.filter(
@@ -246,10 +232,12 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
+                'message': 'successfully deleted game with id {}'.format(game_id)
             })
         except:
             return jsonify({
                 'success': False,
+                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
             })
 
     @ app.route('/developers', methods=['GET'])
