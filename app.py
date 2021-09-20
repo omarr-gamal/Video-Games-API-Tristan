@@ -75,26 +75,12 @@ def create_app(test_config=None):
         if game is None:
             abort(404)
 
-        data = {
-            "id": game.id,
-            "name": game.name,
-            "description": game.description,
-            "release_date": game.release_date,
-            "released": game.released,
-            "rating": game.rating,
-            "critic_rating": game.critic_rating,
-            "PEGI_rating":  game.PEGI_rating,
-            "genres": game.genres,
-            "developer": game.developer_id,
-            "publisher": game.publisher_id
-        }
         return jsonify({
             'success': True,
-            'game': data,
+            'game': game.format(),
         })
 
     @ app.route('/games', methods=['POST'])
-    # @requires_auth('post:games')
     def post_game():
         body = request.get_json()
         try:
@@ -143,10 +129,12 @@ def create_app(test_config=None):
             game.insert()
             return jsonify({
                 'success': True,
+                'game': game.format()
             })
         except:
             return jsonify({
                 'success': False,
+                'message': 'an unexpected error occured while processing your request. Please try again shortly.'
             })
 
     @ app.route('/games/<int:game_id>', methods=['PATCH'])

@@ -58,6 +58,22 @@ class Game(db.Model):
         self.developer_id = developer_id
         self.publisher_id = publisher_id
 
+    def format(self):
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "release_date": self.release_date,
+            "released": self.released,
+            "rating": self.rating,
+            "critic_rating": self.critic_rating,
+            "PEGI_rating":  self.PEGI_rating,
+            "genres": self.genres,
+            "developer": self.developer_id,
+            "publisher": self.publisher_id
+        }
+        return data
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
