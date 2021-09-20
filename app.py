@@ -146,21 +146,47 @@ def create_app(test_config=None):
             abort(404)
 
         body = request.get_json()
+
+        new_release_date = body.get('release_date', None)
+        if new_release_date is not None:
+            try:
+                new_released = (datetime.datetime.strptime(
+                    new_release_date, '%d/%m/%y') > datetime.datetime.now())
+            except:
+                return jsonify({
+                    'success': False,
+                    'message': 'please enter date in the correct format d/m/y as in: 30/5/21'
+                })
+
+        new_developer = body.get('developer', None)
+        if new_developer is not None:
+            developer = Developer.query.filter(
+                Developer.id == new_developer).one_or_none()
+            if developer is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'could not find developer with id {}'.format(new_developer)
+                })
+
+        new_publisher = body.get('publisher', None)
+        if new_publisher is not None:
+            publisher = Publisher.query.filter(
+                Publisher.id == new_publisher).one_or_none()
+            if publisher is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'could not find publisher with id {}'.format(new_publisher)
+                })
+
         try:
             new_name = body.get('name', None)
             new_description = body.get('description', None)
-
-            new_release_date = body.get('release_date', None)
-            new_released = (datetime.datetime.strptime(
-                new_release_date, '%d/%m/%y') > datetime.datetime.now())
 
             new_rating = body.get('rating', None)
             new_critic_rating = body.get('critic_rating', None)
             new_PEGI_rating = body.get('PEGI_rating', None)
 
             new_genres = body.get('genres', None)
-            new_developer = body.get('developer', None)
-            new_publisher = body.get('publisher', None)
 
             if new_name is not None:
                 game.name = new_name
