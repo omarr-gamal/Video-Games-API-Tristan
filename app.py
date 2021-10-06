@@ -58,12 +58,20 @@ def create_app(test_config=None):
             'message': 'could not find publisher with id {}'.format(new_publisher)
         })
 
+    # //////////////////////////////////////////////////////////////////
+    # endpoints
+    # //////////////////////////////////////////////////////////////////
+
+    # home endpoint
     @ app.route('/')
     def index():
         return jsonify({
-            'message': 'hi, this is game api tristan. In order to understand how to interact with the api, please read the documentation here https://github.com/fiend361/Video-Games-API-Tristan',
+            'message': 'hi, this is game api tristan. In order to understand how to interact with the api, \
+please read the documentation here https://github.com/fiend361/Video-Games-API-Tristan or just \
+try hitting https://tristan-game-api.herokuapp.com/games',
         })
 
+    # games endpoints
     @ app.route('/games', methods=['GET'])
     def get_games():
         try:
@@ -224,6 +232,7 @@ def create_app(test_config=None):
         except:
             return make_unexpected_error_message()
 
+    # developers endpoints
     @ app.route('/developers', methods=['GET'])
     def get_developers():
         try:
@@ -231,11 +240,7 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-        data = [{
-            "id": developer.id,
-            "name": developer.name,
-            "description": developer.description
-        } for developer in developers]
+        data = [developer.format() for developer in developers]
 
         return jsonify({
             'success': True,
@@ -249,14 +254,9 @@ def create_app(test_config=None):
         if developer is None:
             abort(404)
 
-        data = {
-            "id": developer.id,
-            "name": developer.name,
-            "description": developer.description
-        }
         return jsonify({
             'success': True,
-            'developer': data,
+            'developer': developer.format(),
         })
 
     @ app.route('/developers', methods=['POST'])
@@ -266,17 +266,23 @@ def create_app(test_config=None):
             new_name = body.get('name', None)
             new_description = body.get('description', None)
 
-            developer = Developer(name=new_name, description=new_description)
+            new_rating = body.get('rating', None)
+            new_establish_year = body.get('establish_year', None)
+
+            new_active = body.get('active', None)
+
+            developer = Developer(name=new_name, description=new_description, rating=new_rating,
+                                  establish_year=new_establish_year, active=new_active)
 
             developer.insert()
             return jsonify({
                 'success': True,
+                'developer': developer.format(),
             })
         except:
-            return jsonify({
-                'success': False,
-            })
+            return make_unexpected_error_message()
 
+    # publishers endpoints
     @ app.route('/publishers', methods=['GET'])
     def get_publishers():
         try:
@@ -284,11 +290,7 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-        data = [{
-            "id": publisher.id,
-            "name": publisher.name,
-            "description": publisher.description
-        } for publisher in publishers]
+        data = [publisher.format() for publisher in publishers]
 
         return jsonify({
             'success': True,
@@ -302,14 +304,9 @@ def create_app(test_config=None):
         if publisher is None:
             abort(404)
 
-        data = {
-            "id": publisher.id,
-            "name": publisher.name,
-            "description": publisher.description
-        }
         return jsonify({
             'success': True,
-            'publisher': data,
+            'publisher': publisher.format(),
         })
 
     @ app.route('/publishers', methods=['POST'])
@@ -319,16 +316,22 @@ def create_app(test_config=None):
             new_name = body.get('name', None)
             new_description = body.get('description', None)
 
-            publisher = Publisher(name=new_name, description=new_description)
+            new_rating = body.get('rating', None)
+            new_establish_year = body.get('establish_year', None)
+
+            new_active = body.get('active', None)
+
+            publisher = Publisher(name=new_name, description=new_description, rating=new_rating,
+                                  establish_year=new_establish_year, active=new_active)
 
             publisher.insert()
+
             return jsonify({
                 'success': True,
+                'developer': publisher.format(),
             })
         except:
-            return jsonify({
-                'success': False,
-            })
+            return make_unexpected_error_message()
 
     # //////////////////////////////////////////////////////////////////
     # error handlers
