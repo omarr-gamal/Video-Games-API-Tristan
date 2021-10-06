@@ -94,12 +94,31 @@ class Developer(db.Model):
     name = Column(String)
     description = Column(String(500))
 
+    rating = Column(Integer)
+    establish_year = Column(Integer)
+
+    active = Column(Boolean)
+
     developed_games = relationship("Game", backref='developed_games',
                                    cascade="all, delete")
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, rating, establish_year, active):
         self.name = name
         self.description = description
+        self.rating = rating
+        self.establish_year = establish_year
+        self.active = active
+
+    def format(self):
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "rating": self.rating,
+            "establish year": self.establish_year,
+            "active": self.active
+        }
+        return data
 
     def insert(self):
         db.session.add(self)
@@ -121,12 +140,31 @@ class Publisher(db.Model):
     name = Column(String)
     description = Column(String(500))
 
+    rating = Column(Integer)
+    establish_year = Column(Integer)
+
+    active = Column(Boolean)
+
     published_games = relationship("Game", backref='published_games',
                                    cascade="all, delete")
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, rating, establish_year, active):
         self.name = name
         self.description = description
+        self.rating = rating
+        self.establish_year = establish_year
+        self.active = active
+
+    def format(self):
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "rating": self.rating,
+            "establish year": self.establish_year,
+            "active": self.active
+        }
+        return data
 
     def insert(self):
         db.session.add(self)
