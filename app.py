@@ -259,6 +259,18 @@ try hitting https://tristan-game-api.herokuapp.com/games',
             'developer': developer.format(),
         })
 
+    @ app.route('/developers/<int:developer_id>/games', methods=['GET'])
+    def get_developer_games(developer_id):
+        games = Game.query.filter(
+            Game.developer_id == developer_id)
+
+        data = [game.format() for game in games]
+
+        return jsonify({
+            'success': True,
+            'games': data,
+        })
+
     @ app.route('/developers', methods=['POST'])
     def post_developer():
         body = request.get_json()
@@ -307,6 +319,18 @@ try hitting https://tristan-game-api.herokuapp.com/games',
         return jsonify({
             'success': True,
             'publisher': publisher.format(),
+        })
+
+    @ app.route('/publishers/<int:publisher_id>/games', methods=['GET'])
+    def get_publisher_games(publisher_id):
+        games = Game.query.filter(
+            Game.publisher_id == publisher_id)
+
+        data = [game.format() for game in games]
+
+        return jsonify({
+            'success': True,
+            'games': data,
         })
 
     @ app.route('/publishers', methods=['POST'])
