@@ -38,23 +38,19 @@ Read the following documentation for the api endpoints if you want to experience
 
 ### Endpoints
 
-```json
-GET '/games'
-GET '/games/<certain_game_id>'
-POST '/games'
-PATCH '/games/<certain_game_id>'
-DELETE '/games/<certain_game_id>'
-
-GET '/developers'
-GET '/developers/<certain_developer_id>'
-GET '/developers/<certain_developer_id>/games'
-POST '/developers'
-
-GET '/publishers'
-GET '/publishers/<certain_publisher_id>'
-GET '/publishers/<certain_publisher_id>/games'
-POST '/publishers'
-```
+* [GET '/games'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-games)
+* [GET '/games/<certain_game_id>'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-gamescertain_game_id)
+* [POST '/games'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#post-games)
+* [PATCH '/games/<certain_game_id>'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#patch-gamescertain_game_id)
+* [DELETE '/games/<certain_game_id>'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#delete-gamescertain_game_id)
+* [GET '/developers'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-developers)
+* [GET '/developers/<certain_developer_id>'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-developerscertain_developer_id)
+* [GET '/developers/<certain_developer_id>/games'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-developerscertain_developer_idgames)
+* [POST '/developers'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#post-developers)
+* [GET '/publishers'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-publishers)
+* [GET '/publishers/<certain_publisher_id>'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-publisherscertain_publisher_id)
+* [GET '/publishers/<certain_publisher_id>/games'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#get-publisherscertain_publisher_idgames)
+* [POST '/publishers'](https://github.com/fiend361/Video-Games-API-Tristan/edit/main/README.md#post-publishers)
 
 #### GET '/games'
 
